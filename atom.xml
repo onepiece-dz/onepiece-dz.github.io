@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://onepiece-dz.github.io</id>
     <title>One-Piece</title>
-    <updated>2020-05-31T11:51:23.148Z</updated>
+    <updated>2020-05-31T11:54:10.933Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://onepiece-dz.github.io"/>
     <link rel="self" href="https://onepiece-dz.github.io/atom.xml"/>
@@ -10,6 +10,24 @@
     <logo>https://onepiece-dz.github.io/images/avatar.png</logo>
     <icon>https://onepiece-dz.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, One-Piece</rights>
+    <entry>
+        <title type="html"><![CDATA[关于]]></title>
+        <id>https://onepiece-dz.github.io/post/about/</id>
+        <link href="https://onepiece-dz.github.io/post/about/">
+        </link>
+        <updated>2020-05-31T11:52:55.000Z</updated>
+        <content type="html"><![CDATA[<p>始终如一</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[关于]]></title>
+        <id>https://onepiece-dz.github.io/post/guan-yu/</id>
+        <link href="https://onepiece-dz.github.io/post/guan-yu/">
+        </link>
+        <updated>2020-05-31T11:52:55.000Z</updated>
+        <content type="html"><![CDATA[<p>始终如一</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Flink&Table API & SQL&外部系统]]></title>
         <id>https://onepiece-dz.github.io/post/flink/</id>
