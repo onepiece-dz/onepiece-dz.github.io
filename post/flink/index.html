@@ -1,22 +1,107 @@
-<?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom">
-    <id>https://onepiece-dz.github.io</id>
-    <title>One-Piece</title>
-    <updated>2020-05-31T11:49:05.060Z</updated>
-    <generator>https://github.com/jpmonette/feed</generator>
-    <link rel="alternate" href="https://onepiece-dz.github.io"/>
-    <link rel="self" href="https://onepiece-dz.github.io/atom.xml"/>
-    <subtitle>知行合一</subtitle>
-    <logo>https://onepiece-dz.github.io/images/avatar.png</logo>
-    <icon>https://onepiece-dz.github.io/favicon.ico</icon>
-    <rights>All rights reserved 2020, One-Piece</rights>
-    <entry>
-        <title type="html"><![CDATA[Flink&Table API & SQL&外部系统]]></title>
-        <id>https://onepiece-dz.github.io/post/flink/</id>
-        <link href="https://onepiece-dz.github.io/post/flink/">
-        </link>
-        <updated>2020-05-31T11:40:58.000Z</updated>
-        <content type="html"><![CDATA[<h1 id="前言">前言</h1>
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Flink&amp;Table API &amp; SQL&amp;外部系统 | One-Piece</title>
+<link rel="shortcut icon" href="https://onepiece-dz.github.io/favicon.ico?v=1590925737724">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://onepiece-dz.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Flink&amp;Table API &amp; SQL&amp;外部系统 | One-Piece - Atom Feed" href="https://onepiece-dz.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="前言
+Table API &amp; SQL 有两种方式连接外部系统，一个是 table source，一个是 table sink，source 负责从外部系统获取数据，如：数据库，k-v 存储，消息队列或者文件系统；sink 负责将数据..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://onepiece-dz.github.io">
+  <img class="avatar" src="https://onepiece-dz.github.io/images/avatar.png?v=1590925737724" alt="">
+  </a>
+  <h1 class="site-title">
+    One-Piece
+  </h1>
+  <p class="site-description">
+    知行合一
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+      
+        <a href="java" class="menu">
+          java
+        </a>
+      
+    
+      
+        <a href="flink" class="menu">
+          flink
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Flink&amp;Table API &amp; SQL&amp;外部系统
+            </h2>
+            <div class="post-info">
+              <span>
+                2020-05-31
+              </span>
+              <span>
+                11 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h1 id="前言">前言</h1>
 <p>Table API &amp; SQL 有两种方式连接外部系统，一个是 table source，一个是 table sink，source 负责从外部系统获取数据，如：数据库，k-v 存储，消息队列或者文件系统；sink 负责将数据提交到外部系统。依赖于source 和 sink 的类型，可能具有如下数据传输的格式：CSV, Parquet, or ORC。flink 为我们提供了连接上述外部系统的连接器，此外还支持我们自定义 source 和 sink，关于定义的内容可参考<a href="https://ci.apache.org/projects/flink/flink-docs-release-1.10/dev/table/sourceSinks.html">用户自定义source&amp;sink</a></p>
 <p>本章主要介绍如何创建一个 source 或 sink，并将其注册到 flink 中。</p>
 <h1 id="依赖">依赖</h1>
@@ -297,6 +382,133 @@ from: mf3</p>
 <p>略</p>
 <p>#其他连接器<br>
 除了以上所讲的连接器外，flink还提供了一些没有迁移（或没有完全迁移完成）到的新的统一接口的 source 和 sink。具体请参考官网原文<a href="https://ci.apache.org/projects/flink/flink-docs-release-1.10/dev/table/connect.html#further-tablesources-and-tablesinks">https://ci.apache.org/projects/flink/flink-docs-release-1.10/dev/table/connect.html#further-tablesources-and-tablesinks</a></p>
-]]></content>
-    </entry>
-</feed>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#%E5%89%8D%E8%A8%80">前言</a></li>
+<li><a href="#%E4%BE%9D%E8%B5%96">依赖</a>
+<ul>
+<li><a href="#%E8%BF%9E%E6%8E%A5%E5%99%A8">连接器</a></li>
+</ul>
+</li>
+<li><a href="#%E6%A6%82%E8%BF%B0">概述</a></li>
+<li><a href="#%E8%A1%A8%E6%A8%A1%E5%BC%8F">表模式</a>
+<ul>
+<li><a href="#rowtime-%E5%B1%9E%E6%80%A7">rowtime 属性</a>
+<ul>
+<li><a href="#%E6%97%B6%E9%97%B4%E6%8F%90%E5%8F%96%E5%99%A8">时间提取器</a></li>
+<li><a href="#watermark-%E7%AD%96%E7%95%A5">watermark 策略</a></li>
+</ul>
+</li>
+<li><a href="#%E7%B1%BB%E5%9E%8B%E5%AD%97%E7%AC%A6%E4%B8%B2">类型字符串</a></li>
+</ul>
+</li>
+<li><a href="#%E6%9B%B4%E6%96%B0%E6%A8%A1%E5%BC%8F">更新模式</a></li>
+<li><a href="#%E8%BF%9E%E6%8E%A5%E5%99%A8-2">连接器</a>
+<ul>
+<li><a href="#%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E8%BF%9E%E6%8E%A5%E5%99%A8">文件系统连接器</a></li>
+<li><a href="#kafka-%E8%BF%9E%E6%8E%A5%E5%99%A8">kafka 连接器</a></li>
+<li><a href="#elasticsearch-%E8%BF%9E%E6%8E%A5%E5%99%A8">Elasticsearch 连接器</a></li>
+<li><a href="#hbase-%E8%BF%9E%E6%8E%A5%E5%99%A8">HBase 连接器</a></li>
+<li><a href="#jdbc-%E8%BF%9E%E6%8E%A5%E5%99%A8">JDBC 连接器</a></li>
+<li><a href="#hive-%E8%BF%9E%E6%8E%A5%E5%99%A8">Hive 连接器</a></li>
+</ul>
+</li>
+<li><a href="#%E8%A1%A8%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F">表数据格式</a>
+<ul>
+<li><a href="#csv">CSV</a></li>
+<li><a href="#json">JSON</a></li>
+<li><a href="#apache-avro">Apache Avro</a></li>
+<li><a href="#old-csv">Old CSV</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+
+        
+          
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: 'c1cd96b713d8487407c2',
+    clientSecret: 'c0321530de2e8cfb94c7acf916a996cebafb006d',
+    repo: 'onepiece-dz.github.io',
+    owner: 'onepiece-dz',
+    admin: ['onepiece-dz'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+          
+
+          
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://onepiece-dz.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>
