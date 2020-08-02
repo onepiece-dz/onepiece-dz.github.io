@@ -3,7 +3,7 @@
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>redis分片集群横向扩容数据迁移方案 | One-Piece</title>
-<link rel="shortcut icon" href="https://onepiece-dz.github.io/favicon.ico?v=1596369194631">
+<link rel="shortcut icon" href="https://onepiece-dz.github.io/favicon.ico?v=1596369584065">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
 <link rel="stylesheet" href="https://onepiece-dz.github.io/styles/main.css">
 <link rel="alternate" type="application/atom+xml" title="redis分片集群横向扩容数据迁移方案 | One-Piece - Atom Feed" href="https://onepiece-dz.github.io/atom.xml">
@@ -11,8 +11,8 @@
 
 
 
-    <meta name="description" content="#背景
-我们都知道，在分布式系统中，用于解决客户端访问分布式集群热点问题的算法比较出名的一种算法就是一致性哈希算法，该算法同样应用在redis中，本司所使用的是64位的有符号hash算法（网上很多例子所使用的是32位无符号hash），加上虚..." />
+    <meta name="description" content="#背景#
+我们知道，在分布式系统中，用于解决客户端访问分布式集群热点问题的算法比较出名的一种算法就是一致性哈希算法，该算法同样应用在redis中，本司所使用的是64位的有符号hash算法（网上很多例子所使用的是32位无符号hash），加上虚..." />
     <meta name="keywords" content="" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
     <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
@@ -22,7 +22,7 @@
       <div class="main-content">
         <div class="site-header">
   <a href="https://onepiece-dz.github.io">
-  <img class="avatar" src="https://onepiece-dz.github.io/images/avatar.png?v=1596369194631" alt="">
+  <img class="avatar" src="https://onepiece-dz.github.io/images/avatar.png?v=1596369584065" alt="">
   </a>
   <h1 class="site-title">
     One-Piece
@@ -101,8 +101,8 @@
             
             <div class="post-content-wrapper">
               <div class="post-content">
-                <p>#背景<br>
-我们都知道，在分布式系统中，用于解决客户端访问分布式集群热点问题的算法比较出名的一种算法就是一致性哈希算法，该算法同样应用在redis中，本司所使用的是64位的有符号hash算法（网上很多例子所使用的是32位无符号hash），加上虚拟节点解决哈希倾斜问题。但无论一致性哈希算法如何优秀，它依然解决不了新增删除节点带来的数据迁移需求。（虽然在很多分布式缓存应用场景，可能仅仅只是存储热点数据，不需要考虑数据迁移，但考虑到热点命中率带来的影响，也是需要进行数据迁移的）。</p>
+                <p>#背景#<br>
+我们知道，在分布式系统中，用于解决客户端访问分布式集群热点问题的算法比较出名的一种算法就是一致性哈希算法，该算法同样应用在redis中，本司所使用的是64位的有符号hash算法（网上很多例子所使用的是32位无符号hash），加上虚拟节点解决哈希倾斜问题。但无论一致性哈希算法如何优秀，它依然解决不了新增删除节点带来的数据迁移需求。（虽然在很多分布式缓存应用场景，可能仅仅只是存储热点数据，不需要考虑数据迁移，但考虑到热点命中率带来的影响，也是需要进行数据迁移的）。</p>
 <p>#方案一：离线迁移方案<br>
 <strong>dump---拷贝到中转机---合并dump---清理冗余数据---拆分dump---传dump---停起主从----启动主从加载数据</strong></p>
 <p><strong>优点</strong>：整个迁移过程，只有最终起停主从加载数据时，无法提供服务，大概持续几分钟的时间，应用系统可以通过降级服务的方式避免这种影响；<br>
