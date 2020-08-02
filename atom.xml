@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://onepiece-dz.github.io</id>
     <title>One-Piece</title>
-    <updated>2020-08-02T11:39:08.573Z</updated>
+    <updated>2020-08-02T11:53:18.455Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://onepiece-dz.github.io"/>
     <link rel="self" href="https://onepiece-dz.github.io/atom.xml"/>
@@ -16,7 +16,9 @@
         <link href="https://onepiece-dz.github.io/post/redis-fen-pian-ji-qun-heng-xiang-kuo-rong-shu-ju-qian-yi-fang-an/">
         </link>
         <updated>2020-08-02T11:34:51.000Z</updated>
-        <content type="html"><![CDATA[<p>#方案一：离线迁移方案<br>
+        <content type="html"><![CDATA[<p>#背景<br>
+我们都知道，在分布式系统中，用于解决客户端访问分布式集群热点问题的算法比较出名的一种算法就是一致性哈希算法，该算法同样应用在redis中，本司所使用的是64位的有符号hash算法（网上很多例子所使用的是32位无符号hash），加上虚拟节点解决哈希倾斜问题。但无论一致性哈希算法如何优秀，它依然解决不了新增删除节点带来的数据迁移需求。（虽然在很多分布式缓存应用场景，可能仅仅只是存储热点数据，不需要考虑数据迁移，但考虑到热点命中率带来的影响，也是需要进行数据迁移的）。</p>
+<p>#方案一：离线迁移方案<br>
 <strong>dump---拷贝到中转机---合并dump---清理冗余数据---拆分dump---传dump---停起主从----启动主从加载数据</strong></p>
 <p><strong>优点</strong>：整个迁移过程，只有最终起停主从加载数据时，无法提供服务，大概持续几分钟的时间，应用系统可以通过降级服务的方式避免这种影响；<br>
 <strong>缺点</strong>：从dump开始之后的新数据都将丢失，而且服务起停过程期间产生的数据如果应用系统自己不做实时备份，将永久丢失。</p>
