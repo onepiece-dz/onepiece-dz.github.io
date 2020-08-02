@@ -3,7 +3,7 @@
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>redis分片集群横向扩容数据迁移方案 | One-Piece</title>
-<link rel="shortcut icon" href="https://onepiece-dz.github.io/favicon.ico?v=1596369584065">
+<link rel="shortcut icon" href="https://onepiece-dz.github.io/favicon.ico?v=1596369789518">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
 <link rel="stylesheet" href="https://onepiece-dz.github.io/styles/main.css">
 <link rel="alternate" type="application/atom+xml" title="redis分片集群横向扩容数据迁移方案 | One-Piece - Atom Feed" href="https://onepiece-dz.github.io/atom.xml">
@@ -11,8 +11,8 @@
 
 
 
-    <meta name="description" content="#背景#
-我们知道，在分布式系统中，用于解决客户端访问分布式集群热点问题的算法比较出名的一种算法就是一致性哈希算法，该算法同样应用在redis中，本司所使用的是64位的有符号hash算法（网上很多例子所使用的是32位无符号hash），加上虚..." />
+    <meta name="description" content="背景
+我们知道，在分布式系统中，用于解决客户端访问分布式集群热点问题的算法比较出名的一种算法就是一致性哈希算法，该算法同样应用在redis中，本司所使用的是64位的有符号hash算法（网上很多例子所使用的是32位无符号hash），加上虚拟节..." />
     <meta name="keywords" content="" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
     <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
@@ -22,7 +22,7 @@
       <div class="main-content">
         <div class="site-header">
   <a href="https://onepiece-dz.github.io">
-  <img class="avatar" src="https://onepiece-dz.github.io/images/avatar.png?v=1596369584065" alt="">
+  <img class="avatar" src="https://onepiece-dz.github.io/images/avatar.png?v=1596369789518" alt="">
   </a>
   <h1 class="site-title">
     One-Piece
@@ -101,14 +101,14 @@
             
             <div class="post-content-wrapper">
               <div class="post-content">
-                <p>#背景#<br>
-我们知道，在分布式系统中，用于解决客户端访问分布式集群热点问题的算法比较出名的一种算法就是一致性哈希算法，该算法同样应用在redis中，本司所使用的是64位的有符号hash算法（网上很多例子所使用的是32位无符号hash），加上虚拟节点解决哈希倾斜问题。但无论一致性哈希算法如何优秀，它依然解决不了新增删除节点带来的数据迁移需求。（虽然在很多分布式缓存应用场景，可能仅仅只是存储热点数据，不需要考虑数据迁移，但考虑到热点命中率带来的影响，也是需要进行数据迁移的）。</p>
-<p>#方案一：离线迁移方案<br>
-<strong>dump---拷贝到中转机---合并dump---清理冗余数据---拆分dump---传dump---停起主从----启动主从加载数据</strong></p>
+                <h1 id="背景">背景</h1>
+<p>我们知道，在分布式系统中，用于解决客户端访问分布式集群热点问题的算法比较出名的一种算法就是一致性哈希算法，该算法同样应用在redis中，本司所使用的是64位的有符号hash算法（网上很多例子所使用的是32位无符号hash），加上虚拟节点解决哈希倾斜问题。但无论一致性哈希算法如何优秀，它依然解决不了新增删除节点带来的数据迁移需求。（虽然在很多分布式缓存应用场景，可能仅仅只是存储热点数据，不需要考虑数据迁移，但考虑到热点命中率带来的影响，也是需要进行数据迁移的）。</p>
+<h1 id="方案一离线迁移方案">方案一：离线迁移方案</h1>
+<p><strong>dump---拷贝到中转机---合并dump---清理冗余数据---拆分dump---传dump---停起主从----启动主从加载数据</strong></p>
 <p><strong>优点</strong>：整个迁移过程，只有最终起停主从加载数据时，无法提供服务，大概持续几分钟的时间，应用系统可以通过降级服务的方式避免这种影响；<br>
 <strong>缺点</strong>：从dump开始之后的新数据都将丢失，而且服务起停过程期间产生的数据如果应用系统自己不做实时备份，将永久丢失。</p>
 <p><strong>应用场景</strong>：对数据丢失不敏感，支持降级的服务，以及有紧急扩容需求的业务系统可以选择</p>
-<p>#方案二：不停机横向扩容方案1</p>
+<h1 id="方案二不停机横向扩容方案1">方案二：不停机横向扩容方案1</h1>
 <p><strong>第一步</strong>：应用系统替换最新的redis分片配置，此时新数据将按照新的分片进行路由，扩容过程部分老数据查询不到；<br>
 <strong>第二步</strong>：运维dump老分片的rdb文件，遍历文件内容，按照新分片进行rehash，如果发现rehash之后匹配的分片与之前不一致，则为需要迁移的key，记录迁移前的分片（用于删除），记录迁移后的分片（用于迁移）<br>
 <strong>第三步</strong>：将需要迁移的key使用redis客户端插入到新的分片（第二步中已经通过rehash计算出来新的所属分片）；<br>
@@ -117,7 +117,7 @@
 <p><strong>优点</strong>：整个迁移过程不需要停机，数据不会丢失；<br>
 <strong>缺点</strong>：第三步执行成功之前，这部分迁移的key会因为客户端rehash结果与之前不一致导致查询不到，此时可能会影响业务；（该方案需要业务自行评估影响）；</p>
 <p><strong>应用场景</strong>：对数据丢失敏感，但可支持短时间降级（key查询为空的情况）的服务，以及有紧急扩容需求的业务系统可以选择；</p>
-<p>#方案三：不停机横向扩容方案2</p>
+<h1 id="方案三不停机横向扩容方案2">方案三：不停机横向扩容方案2</h1>
 <p>应用系统同时对新老分片集群进行“双份”写入，此时查询还是通过老分片提供；<br>
 等到新分片集群已经完全可以提供查询服务时，替换查询服务到新分片集群（如何确认新分片集群可以提供查询服务，需要根据老集群中所有key的最长失效时间，必须超过这个时间，才能将查询切换到新集群；</p>
 <p><strong>优点</strong>：整个迁移过程不需要停机，数据不会丢失，同时迁移过程也不会出现查询不到key的情况；<br>
@@ -126,11 +126,18 @@
 2.整个迁移过程可能会因为集群中key的最长失效时间过长，导致迁移周期太长，同时迁移过程可能出现大量key在不同的分片中重复存储，因此这个方案在时间和空间上都步不适合临时紧急扩容；<br>
 3.“双份”写入可能会影响服务性能<br>
 <strong>应用场景</strong>：对数据丢失敏感，且不支持服务降级的系统，以及没有紧急扩容要求的系统可以选择；</p>
-<p>#总结：每个方案各有优缺点，业务系统可以根据自身的应用场景和数据特点选择方案。方案一和方案二都需要中间件和运维进行技术支持，应用系统不用做改造。方案二目前尚未提供；方案三不需要中间件和运维支持，业务系统自行完成；方案一可以有改进版，业务系统自行备份迁移过程的数据，在迁移完成后自行步入。</p>
+<h1 id="总结每个方案各有优缺点业务系统可以根据自身的应用场景和数据特点选择方案-方案一和方案二都需要中间件和运维进行技术支持应用系统不用做改造-方案二目前尚未提供方案三不需要中间件和运维支持业务系统自行完成方案一可以有改进版业务系统自行备份迁移过程的数据在迁移完成后自行步入">总结：每个方案各有优缺点，业务系统可以根据自身的应用场景和数据特点选择方案。方案一和方案二都需要中间件和运维进行技术支持，应用系统不用做改造。方案二目前尚未提供；方案三不需要中间件和运维支持，业务系统自行完成；方案一可以有改进版，业务系统自行备份迁移过程的数据，在迁移完成后自行步入。</h1>
 
               </div>
               <div class="toc-container">
-                
+                <ul class="markdownIt-TOC">
+<li><a href="#%E8%83%8C%E6%99%AF">背景</a></li>
+<li><a href="#%E6%96%B9%E6%A1%88%E4%B8%80%E7%A6%BB%E7%BA%BF%E8%BF%81%E7%A7%BB%E6%96%B9%E6%A1%88">方案一：离线迁移方案</a></li>
+<li><a href="#%E6%96%B9%E6%A1%88%E4%BA%8C%E4%B8%8D%E5%81%9C%E6%9C%BA%E6%A8%AA%E5%90%91%E6%89%A9%E5%AE%B9%E6%96%B9%E6%A1%881">方案二：不停机横向扩容方案1</a></li>
+<li><a href="#%E6%96%B9%E6%A1%88%E4%B8%89%E4%B8%8D%E5%81%9C%E6%9C%BA%E6%A8%AA%E5%90%91%E6%89%A9%E5%AE%B9%E6%96%B9%E6%A1%882">方案三：不停机横向扩容方案2</a></li>
+<li><a href="#%E6%80%BB%E7%BB%93%E6%AF%8F%E4%B8%AA%E6%96%B9%E6%A1%88%E5%90%84%E6%9C%89%E4%BC%98%E7%BC%BA%E7%82%B9%E4%B8%9A%E5%8A%A1%E7%B3%BB%E7%BB%9F%E5%8F%AF%E4%BB%A5%E6%A0%B9%E6%8D%AE%E8%87%AA%E8%BA%AB%E7%9A%84%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF%E5%92%8C%E6%95%B0%E6%8D%AE%E7%89%B9%E7%82%B9%E9%80%89%E6%8B%A9%E6%96%B9%E6%A1%88-%E6%96%B9%E6%A1%88%E4%B8%80%E5%92%8C%E6%96%B9%E6%A1%88%E4%BA%8C%E9%83%BD%E9%9C%80%E8%A6%81%E4%B8%AD%E9%97%B4%E4%BB%B6%E5%92%8C%E8%BF%90%E7%BB%B4%E8%BF%9B%E8%A1%8C%E6%8A%80%E6%9C%AF%E6%94%AF%E6%8C%81%E5%BA%94%E7%94%A8%E7%B3%BB%E7%BB%9F%E4%B8%8D%E7%94%A8%E5%81%9A%E6%94%B9%E9%80%A0-%E6%96%B9%E6%A1%88%E4%BA%8C%E7%9B%AE%E5%89%8D%E5%B0%9A%E6%9C%AA%E6%8F%90%E4%BE%9B%E6%96%B9%E6%A1%88%E4%B8%89%E4%B8%8D%E9%9C%80%E8%A6%81%E4%B8%AD%E9%97%B4%E4%BB%B6%E5%92%8C%E8%BF%90%E7%BB%B4%E6%94%AF%E6%8C%81%E4%B8%9A%E5%8A%A1%E7%B3%BB%E7%BB%9F%E8%87%AA%E8%A1%8C%E5%AE%8C%E6%88%90%E6%96%B9%E6%A1%88%E4%B8%80%E5%8F%AF%E4%BB%A5%E6%9C%89%E6%94%B9%E8%BF%9B%E7%89%88%E4%B8%9A%E5%8A%A1%E7%B3%BB%E7%BB%9F%E8%87%AA%E8%A1%8C%E5%A4%87%E4%BB%BD%E8%BF%81%E7%A7%BB%E8%BF%87%E7%A8%8B%E7%9A%84%E6%95%B0%E6%8D%AE%E5%9C%A8%E8%BF%81%E7%A7%BB%E5%AE%8C%E6%88%90%E5%90%8E%E8%87%AA%E8%A1%8C%E6%AD%A5%E5%85%A5">总结：每个方案各有优缺点，业务系统可以根据自身的应用场景和数据特点选择方案。方案一和方案二都需要中间件和运维进行技术支持，应用系统不用做改造。方案二目前尚未提供；方案三不需要中间件和运维支持，业务系统自行完成；方案一可以有改进版，业务系统自行备份迁移过程的数据，在迁移完成后自行步入。</a></li>
+</ul>
+
               </div>
             </div>
           </article>
