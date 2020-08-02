@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://onepiece-dz.github.io</id>
     <title>One-Piece</title>
-    <updated>2020-05-31T11:55:25.025Z</updated>
+    <updated>2020-08-02T11:39:08.573Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://onepiece-dz.github.io"/>
     <link rel="self" href="https://onepiece-dz.github.io/atom.xml"/>
@@ -10,6 +10,38 @@
     <logo>https://onepiece-dz.github.io/images/avatar.png</logo>
     <icon>https://onepiece-dz.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, One-Piece</rights>
+    <entry>
+        <title type="html"><![CDATA[redis分片集群横向扩容数据迁移方案]]></title>
+        <id>https://onepiece-dz.github.io/post/redis-fen-pian-ji-qun-heng-xiang-kuo-rong-shu-ju-qian-yi-fang-an/</id>
+        <link href="https://onepiece-dz.github.io/post/redis-fen-pian-ji-qun-heng-xiang-kuo-rong-shu-ju-qian-yi-fang-an/">
+        </link>
+        <updated>2020-08-02T11:34:51.000Z</updated>
+        <content type="html"><![CDATA[<p>#方案一：离线迁移方案<br>
+<strong>dump---拷贝到中转机---合并dump---清理冗余数据---拆分dump---传dump---停起主从----启动主从加载数据</strong></p>
+<p><strong>优点</strong>：整个迁移过程，只有最终起停主从加载数据时，无法提供服务，大概持续几分钟的时间，应用系统可以通过降级服务的方式避免这种影响；<br>
+<strong>缺点</strong>：从dump开始之后的新数据都将丢失，而且服务起停过程期间产生的数据如果应用系统自己不做实时备份，将永久丢失。</p>
+<p><strong>应用场景</strong>：对数据丢失不敏感，支持降级的服务，以及有紧急扩容需求的业务系统可以选择</p>
+<p>#方案二：不停机横向扩容方案1</p>
+<p><strong>第一步</strong>：应用系统替换最新的redis分片配置，此时新数据将按照新的分片进行路由，扩容过程部分老数据查询不到；<br>
+<strong>第二步</strong>：运维dump老分片的rdb文件，遍历文件内容，按照新分片进行rehash，如果发现rehash之后匹配的分片与之前不一致，则为需要迁移的key，记录迁移前的分片（用于删除），记录迁移后的分片（用于迁移）<br>
+<strong>第三步</strong>：将需要迁移的key使用redis客户端插入到新的分片（第二步中已经通过rehash计算出来新的所属分片）；<br>
+<strong>第四步</strong>：从老分片中删除这部分已经迁移的key（第二步中已经比较出这部分key）。<br>
+（注：第三步，第四步操作的数据是同一批，都是第二步计算出来的需要重新迁移的key；）</p>
+<p><strong>优点</strong>：整个迁移过程不需要停机，数据不会丢失；<br>
+<strong>缺点</strong>：第三步执行成功之前，这部分迁移的key会因为客户端rehash结果与之前不一致导致查询不到，此时可能会影响业务；（该方案需要业务自行评估影响）；</p>
+<p><strong>应用场景</strong>：对数据丢失敏感，但可支持短时间降级（key查询为空的情况）的服务，以及有紧急扩容需求的业务系统可以选择；</p>
+<p>#方案三：不停机横向扩容方案2</p>
+<p>应用系统同时对新老分片集群进行“双份”写入，此时查询还是通过老分片提供；<br>
+等到新分片集群已经完全可以提供查询服务时，替换查询服务到新分片集群（如何确认新分片集群可以提供查询服务，需要根据老集群中所有key的最长失效时间，必须超过这个时间，才能将查询切换到新集群；</p>
+<p><strong>优点</strong>：整个迁移过程不需要停机，数据不会丢失，同时迁移过程也不会出现查询不到key的情况；<br>
+<strong>缺点</strong>：<br>
+1.需要应用系统自行改造代码发布，迁移完之后，还需要进行发布还原代码；<br>
+2.整个迁移过程可能会因为集群中key的最长失效时间过长，导致迁移周期太长，同时迁移过程可能出现大量key在不同的分片中重复存储，因此这个方案在时间和空间上都步不适合临时紧急扩容；<br>
+3.“双份”写入可能会影响服务性能<br>
+<strong>应用场景</strong>：对数据丢失敏感，且不支持服务降级的系统，以及没有紧急扩容要求的系统可以选择；</p>
+<p>#总结：每个方案各有优缺点，业务系统可以根据自身的应用场景和数据特点选择方案。方案一和方案二都需要中间件和运维进行技术支持，应用系统不用做改造。方案二目前尚未提供；方案三不需要中间件和运维支持，业务系统自行完成；方案一可以有改进版，业务系统自行备份迁移过程的数据，在迁移完成后自行步入。</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[关于]]></title>
         <id>https://onepiece-dz.github.io/post/about/</id>
