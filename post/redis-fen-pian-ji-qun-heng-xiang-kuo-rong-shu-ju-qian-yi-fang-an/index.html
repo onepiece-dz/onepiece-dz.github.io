@@ -3,7 +3,7 @@
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>redis分片集群横向扩容数据迁移方案 | One-Piece</title>
-<link rel="shortcut icon" href="https://onepiece-dz.github.io/favicon.ico?v=1596369789518">
+<link rel="shortcut icon" href="https://onepiece-dz.github.io/favicon.ico?v=1596370031767">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
 <link rel="stylesheet" href="https://onepiece-dz.github.io/styles/main.css">
 <link rel="alternate" type="application/atom+xml" title="redis分片集群横向扩容数据迁移方案 | One-Piece - Atom Feed" href="https://onepiece-dz.github.io/atom.xml">
@@ -22,7 +22,7 @@
       <div class="main-content">
         <div class="site-header">
   <a href="https://onepiece-dz.github.io">
-  <img class="avatar" src="https://onepiece-dz.github.io/images/avatar.png?v=1596369789518" alt="">
+  <img class="avatar" src="https://onepiece-dz.github.io/images/avatar.png?v=1596370031767" alt="">
   </a>
   <h1 class="site-title">
     One-Piece
@@ -126,7 +126,7 @@
 2.整个迁移过程可能会因为集群中key的最长失效时间过长，导致迁移周期太长，同时迁移过程可能出现大量key在不同的分片中重复存储，因此这个方案在时间和空间上都步不适合临时紧急扩容；<br>
 3.“双份”写入可能会影响服务性能<br>
 <strong>应用场景</strong>：对数据丢失敏感，且不支持服务降级的系统，以及没有紧急扩容要求的系统可以选择；</p>
-<h1 id="总结每个方案各有优缺点业务系统可以根据自身的应用场景和数据特点选择方案-方案一和方案二都需要中间件和运维进行技术支持应用系统不用做改造-方案二目前尚未提供方案三不需要中间件和运维支持业务系统自行完成方案一可以有改进版业务系统自行备份迁移过程的数据在迁移完成后自行步入">总结：每个方案各有优缺点，业务系统可以根据自身的应用场景和数据特点选择方案。方案一和方案二都需要中间件和运维进行技术支持，应用系统不用做改造。方案二目前尚未提供；方案三不需要中间件和运维支持，业务系统自行完成；方案一可以有改进版，业务系统自行备份迁移过程的数据，在迁移完成后自行步入。</h1>
+<p><strong>总结：每个方案各有优缺点，业务系统可以根据自身的应用场景和数据特点选择方案。方案一和方案二都需要中间件和运维进行技术支持，应用系统不用做改造。方案二目前尚未提供；方案三不需要中间件和运维支持，业务系统自行完成；方案一可以有改进版，业务系统自行备份迁移过程的数据，在迁移完成后自行步入。</strong></p>
 
               </div>
               <div class="toc-container">
@@ -135,7 +135,6 @@
 <li><a href="#%E6%96%B9%E6%A1%88%E4%B8%80%E7%A6%BB%E7%BA%BF%E8%BF%81%E7%A7%BB%E6%96%B9%E6%A1%88">方案一：离线迁移方案</a></li>
 <li><a href="#%E6%96%B9%E6%A1%88%E4%BA%8C%E4%B8%8D%E5%81%9C%E6%9C%BA%E6%A8%AA%E5%90%91%E6%89%A9%E5%AE%B9%E6%96%B9%E6%A1%881">方案二：不停机横向扩容方案1</a></li>
 <li><a href="#%E6%96%B9%E6%A1%88%E4%B8%89%E4%B8%8D%E5%81%9C%E6%9C%BA%E6%A8%AA%E5%90%91%E6%89%A9%E5%AE%B9%E6%96%B9%E6%A1%882">方案三：不停机横向扩容方案2</a></li>
-<li><a href="#%E6%80%BB%E7%BB%93%E6%AF%8F%E4%B8%AA%E6%96%B9%E6%A1%88%E5%90%84%E6%9C%89%E4%BC%98%E7%BC%BA%E7%82%B9%E4%B8%9A%E5%8A%A1%E7%B3%BB%E7%BB%9F%E5%8F%AF%E4%BB%A5%E6%A0%B9%E6%8D%AE%E8%87%AA%E8%BA%AB%E7%9A%84%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF%E5%92%8C%E6%95%B0%E6%8D%AE%E7%89%B9%E7%82%B9%E9%80%89%E6%8B%A9%E6%96%B9%E6%A1%88-%E6%96%B9%E6%A1%88%E4%B8%80%E5%92%8C%E6%96%B9%E6%A1%88%E4%BA%8C%E9%83%BD%E9%9C%80%E8%A6%81%E4%B8%AD%E9%97%B4%E4%BB%B6%E5%92%8C%E8%BF%90%E7%BB%B4%E8%BF%9B%E8%A1%8C%E6%8A%80%E6%9C%AF%E6%94%AF%E6%8C%81%E5%BA%94%E7%94%A8%E7%B3%BB%E7%BB%9F%E4%B8%8D%E7%94%A8%E5%81%9A%E6%94%B9%E9%80%A0-%E6%96%B9%E6%A1%88%E4%BA%8C%E7%9B%AE%E5%89%8D%E5%B0%9A%E6%9C%AA%E6%8F%90%E4%BE%9B%E6%96%B9%E6%A1%88%E4%B8%89%E4%B8%8D%E9%9C%80%E8%A6%81%E4%B8%AD%E9%97%B4%E4%BB%B6%E5%92%8C%E8%BF%90%E7%BB%B4%E6%94%AF%E6%8C%81%E4%B8%9A%E5%8A%A1%E7%B3%BB%E7%BB%9F%E8%87%AA%E8%A1%8C%E5%AE%8C%E6%88%90%E6%96%B9%E6%A1%88%E4%B8%80%E5%8F%AF%E4%BB%A5%E6%9C%89%E6%94%B9%E8%BF%9B%E7%89%88%E4%B8%9A%E5%8A%A1%E7%B3%BB%E7%BB%9F%E8%87%AA%E8%A1%8C%E5%A4%87%E4%BB%BD%E8%BF%81%E7%A7%BB%E8%BF%87%E7%A8%8B%E7%9A%84%E6%95%B0%E6%8D%AE%E5%9C%A8%E8%BF%81%E7%A7%BB%E5%AE%8C%E6%88%90%E5%90%8E%E8%87%AA%E8%A1%8C%E6%AD%A5%E5%85%A5">总结：每个方案各有优缺点，业务系统可以根据自身的应用场景和数据特点选择方案。方案一和方案二都需要中间件和运维进行技术支持，应用系统不用做改造。方案二目前尚未提供；方案三不需要中间件和运维支持，业务系统自行完成；方案一可以有改进版，业务系统自行备份迁移过程的数据，在迁移完成后自行步入。</a></li>
 </ul>
 
               </div>
