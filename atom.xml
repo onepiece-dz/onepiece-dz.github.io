@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://onepiece-dz.github.io</id>
     <title>One-Piece</title>
-    <updated>2020-08-03T01:10:00.495Z</updated>
+    <updated>2020-08-03T02:04:05.601Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://onepiece-dz.github.io"/>
     <link rel="self" href="https://onepiece-dz.github.io/atom.xml"/>
@@ -24,11 +24,12 @@
 <strong>缺点</strong>：从dump开始之后的新数据都将丢失，而且服务起停过程期间产生的数据如果应用系统自己不做实时备份，将永久丢失。</p>
 <p><strong>应用场景</strong>：对数据丢失不敏感，支持降级的服务，以及有紧急扩容需求的业务系统可以选择</p>
 <h1 id="方案二不停机横向扩容方案1">方案二：不停机横向扩容方案1</h1>
-<p><strong>第一步</strong>：应用系统替换最新的redis分片配置，此时新数据将按照新的分片进行路由，扩容过程部分老数据查询不到；<br>
-<strong>第二步</strong>：运维dump老分片的rdb文件，遍历文件内容，按照新分片进行rehash，如果发现rehash之后匹配的分片与之前不一致，则为需要迁移的key，记录迁移前的分片（用于删除），记录迁移后的分片（用于迁移）<br>
-<strong>第三步</strong>：将需要迁移的key使用redis客户端插入到新的分片（第二步中已经通过rehash计算出来新的所属分片）；<br>
-<strong>第四步</strong>：从老分片中删除这部分已经迁移的key（第二步中已经比较出这部分key）。<br>
-（注：第三步，第四步操作的数据是同一批，都是第二步计算出来的需要重新迁移的key；）</p>
+<p><strong>第一步</strong>：运维dump老分片的rdb文件（此时刻为T1），遍历文件内容，按照新分片进行rehash，如果发现rehash之后匹配的分片与之前不一致，则为需要迁移的key，记录迁移前的分片（用于删除），记录迁移后的分片（用于迁移）；<br>
+<strong>第二步</strong>：将需要迁移的key使用redis客户端插入到新的分片（第二步中已经通过rehash计算出来新的所属分片）；<br>
+<strong>第三步</strong>：应用系统替换最新的redis分片配置，此时新数据将按照新的分片进行路由（此时刻为T2）；<br>
+<strong>第四步</strong>：从老分片中删除这部分已经迁移的key（第二步中已经比较出这部分key；<br>
+<strong>第五步</strong>：重复第一步、第二步、第四步，目的是将T1-T2时刻写入到老分片集群的新数据重新迁移；<br>
+（注：第二步，第四步操作的数据是同一批，都是第一步计算出来的需要重新迁移的key；需要直接使用插入删除命令）</p>
 <p><strong>优点</strong>：整个迁移过程不需要停机，数据不会丢失；<br>
 <strong>缺点</strong>：<br>
 1.第三步执行成功之前，这部分迁移的key会因为客户端rehash结果与之前不一致导致查询不到，此时可能会影响业务；（该方案需要业务自行评估影响）；<br>
