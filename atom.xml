@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://onepiece-dz.github.io</id>
     <title>One-Piece</title>
-    <updated>2020-08-03T01:00:11.572Z</updated>
+    <updated>2020-08-03T01:10:00.495Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://onepiece-dz.github.io"/>
     <link rel="self" href="https://onepiece-dz.github.io/atom.xml"/>
@@ -30,7 +30,9 @@
 <strong>第四步</strong>：从老分片中删除这部分已经迁移的key（第二步中已经比较出这部分key）。<br>
 （注：第三步，第四步操作的数据是同一批，都是第二步计算出来的需要重新迁移的key；）</p>
 <p><strong>优点</strong>：整个迁移过程不需要停机，数据不会丢失；<br>
-<strong>缺点</strong>：第三步执行成功之前，这部分迁移的key会因为客户端rehash结果与之前不一致导致查询不到，此时可能会影响业务；（该方案需要业务自行评估影响）；</p>
+<strong>缺点</strong>：<br>
+1.第三步执行成功之前，这部分迁移的key会因为客户端rehash结果与之前不一致导致查询不到，此时可能会影响业务；（该方案需要业务自行评估影响）；<br>
+2.步骤三插入前可能已经在新分片有写入了，这时候旧数据不能随便写入，可能引起数据覆盖，这个需要做检查优化。实现较为繁琐。</p>
 <p><strong>应用场景</strong>：对数据丢失敏感，但可支持短时间降级（key查询为空的情况）的服务，以及有紧急扩容需求的业务系统可以选择；</p>
 <h1 id="方案三不停机横向扩容方案2">方案三：不停机横向扩容方案2</h1>
 <p>应用系统同时对新老分片集群进行“双份”写入，此时查询还是通过老分片提供；<br>
